@@ -1,4 +1,4 @@
-ECSE351 GNU Problem Set
+ECSE 351 GNU Problem Set
 <br>Alden Salmons
 <br>April 18th, 2025
 
