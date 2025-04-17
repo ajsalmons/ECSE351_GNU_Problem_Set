@@ -22,7 +22,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Baba Yaga's Hut
+    title: Phase Lab
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -52,7 +52,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [312, 4.0]
+    coordinate: [8, 420.0]
     rotation: 0
     state: enabled
 - name: a_y2
@@ -74,7 +74,51 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [888, 4.0]
+    coordinate: [760, 420.0]
+    rotation: 0
+    state: enabled
+- name: dc_y1
+  id: variable_qtgui_dial_control
+  parameters:
+    comment: ''
+    gui_hint: 4,3,1,1
+    label: Offset (Y1)
+    maximum: '50'
+    minimum: '-50'
+    minsize: '100'
+    outputmsgname: value
+    relBackgroundColor: aqua
+    scaleFactor: '0.02'
+    showvalue: 'True'
+    type: real
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [584, 420.0]
+    rotation: 0
+    state: enabled
+- name: dc_y2
+  id: variable_qtgui_dial_control
+  parameters:
+    comment: ''
+    gui_hint: 4,7,1,1
+    label: Offset (Y1)
+    maximum: '50'
+    minimum: '-50'
+    minsize: '100'
+    outputmsgname: value
+    relBackgroundColor: purple
+    scaleFactor: '0.02'
+    showvalue: 'True'
+    type: real
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1336, 420.0]
     rotation: 0
     state: enabled
 - name: f_y1
@@ -96,7 +140,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [512, 4.0]
+    coordinate: [208, 420.0]
     rotation: 0
     state: enabled
 - name: f_y2
@@ -118,7 +162,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1088, 4.0]
+    coordinate: [960, 420.0]
     rotation: 0
     state: enabled
 - name: p_y1
@@ -140,7 +184,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 4.0]
+    coordinate: [408, 420.0]
     rotation: 0
     state: enabled
 - name: p_y2
@@ -157,24 +201,24 @@ blocks:
     scaleFactor: '5'
     showvalue: 'True'
     type: real
-    value: '0'
+    value: '90'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1288, 4.0]
+    coordinate: [1160, 420.0]
     rotation: 0
     state: enabled
 - name: samp_rate
   id: variable
   parameters:
     comment: ''
-    value: '10000'
+    value: '1000'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [200, 8.0]
+    coordinate: [208, 8.0]
     rotation: 0
     state: enabled
 - name: analog_sig_source_x_0
@@ -187,7 +231,7 @@ blocks:
     freq: f_y2
     maxoutbuf: '0'
     minoutbuf: '0'
-    offset: '0'
+    offset: dc_y2
     phase: p_y2 * math.pi /180
     samp_rate: samp_rate
     showports: 'False'
@@ -197,7 +241,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 340.0]
+    coordinate: [8, 260.0]
     rotation: 0
     state: enabled
 - name: analog_sig_source_x_0_0
@@ -210,7 +254,7 @@ blocks:
     freq: f_y1
     maxoutbuf: '0'
     minoutbuf: '0'
-    offset: '0'
+    offset: dc_y1
     phase: p_y1 * math.pi /180
     samp_rate: samp_rate
     showports: 'False'
@@ -220,7 +264,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [192, 196.0]
+    coordinate: [8, 116.0]
     rotation: 0
     state: enabled
 - name: blocks_multiply_xx_0
@@ -238,7 +282,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [608, 336.0]
+    coordinate: [384, 328.0]
     rotation: 0
     state: enabled
 - name: import_0
@@ -251,7 +295,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [200, 72.0]
+    coordinate: [320, 8.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -341,14 +385,14 @@ blocks:
     width8: '1'
     width9: '1'
     ylabel: Amplitude
-    ymax: '1'
-    ymin: '-1'
+    ymax: '2'
+    ymin: '-2'
     yunit: '""'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1072, 268.0]
+    coordinate: [600, 164.0]
     rotation: 0
     state: enabled
 

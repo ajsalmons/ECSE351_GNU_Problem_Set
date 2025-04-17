@@ -5,13 +5,14 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 # GNU Radio Python Flow Graph
-# Title: Baba Yaga's Hut
+# Title: Phase Lab
 # GNU Radio version: 3.10.12.0
 
 from PyQt5 import Qt
 from gnuradio import qtgui
 from gnuradio import analog
 from gnuradio import blocks
+import math
 from gnuradio import gr
 from gnuradio.filter import firdes
 from gnuradio.fft import window
@@ -21,7 +22,6 @@ from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-import math
 import sip
 import threading
 
@@ -30,9 +30,9 @@ import threading
 class untitled(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Baba Yaga's Hut", catch_exceptions=True)
+        gr.top_block.__init__(self, "Phase Lab", catch_exceptions=True)
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Baba Yaga's Hut")
+        self.setWindowTitle("Phase Lab")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -63,11 +63,13 @@ class untitled(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 10000
-        self.p_y2 = p_y2 = 0
+        self.samp_rate = samp_rate = 22050
+        self.p_y2 = p_y2 = 90
         self.p_y1 = p_y1 = 0
         self.f_y2 = f_y2 = 0.5
         self.f_y1 = f_y1 = 0.5
+        self.dc_y2 = dc_y2 = 0
+        self.dc_y1 = dc_y1 = 0
         self.a_y2 = a_y2 = 1
         self.a_y1 = a_y1 = 1
 
@@ -82,7 +84,7 @@ class untitled(gr.top_block, Qt.QWidget):
         	isFloat = True
         	scaleFactor = 5
 
-        _p_y2_dial_control = qtgui.GrDialControl('Phase (Y2)', self, 0,72,0,"purple",self.set_p_y2,isFloat, scaleFactor, 100, True, "'value'")
+        _p_y2_dial_control = qtgui.GrDialControl('Phase (Y2)', self, 0,72,90,"purple",self.set_p_y2,isFloat, scaleFactor, 100, True, "'value'")
         self.p_y2 = _p_y2_dial_control
 
         self.top_grid_layout.addWidget(_p_y2_dial_control, 4, 6, 1, 1)
@@ -140,6 +142,36 @@ class untitled(gr.top_block, Qt.QWidget):
         	scaleFactor = 1
         else:
         	isFloat = True
+        	scaleFactor = 0.02
+
+        _dc_y2_dial_control = qtgui.GrDialControl('Offset (Y1)', self, (-50),50,0,"purple",self.set_dc_y2,isFloat, scaleFactor, 100, True, "'value'")
+        self.dc_y2 = _dc_y2_dial_control
+
+        self.top_grid_layout.addWidget(_dc_y2_dial_control, 4, 7, 1, 1)
+        for r in range(4, 5):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(7, 8):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        if "real" == "int":
+        	isFloat = False
+        	scaleFactor = 1
+        else:
+        	isFloat = True
+        	scaleFactor = 0.02
+
+        _dc_y1_dial_control = qtgui.GrDialControl('Offset (Y1)', self, (-50),50,0,"aqua",self.set_dc_y1,isFloat, scaleFactor, 100, True, "'value'")
+        self.dc_y1 = _dc_y1_dial_control
+
+        self.top_grid_layout.addWidget(_dc_y1_dial_control, 4, 3, 1, 1)
+        for r in range(4, 5):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(3, 4):
+            self.top_grid_layout.setColumnStretch(c, 1)
+        if "real" == "int":
+        	isFloat = False
+        	scaleFactor = 1
+        else:
+        	isFloat = True
         	scaleFactor = 0.01
 
         _a_y2_dial_control = qtgui.GrDialControl('Amplitude (Y2)', self, 0,100,1,"purple",self.set_a_y2,isFloat, scaleFactor, 100, True, "'value'")
@@ -173,7 +205,7 @@ class untitled(gr.top_block, Qt.QWidget):
             None # parent
         )
         self.qtgui_time_sink_x_0.set_update_time(0.10)
-        self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
+        self.qtgui_time_sink_x_0.set_y_axis(-2, 2)
 
         self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
 
@@ -217,19 +249,53 @@ class untitled(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(0, 4):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self.blocks_multiply_xx_0 = blocks.multiply_vff(1)
-        self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, f_y1, a_y1, 0, (p_y1 * math.pi /180))
-        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, f_y2, a_y2, 0, (p_y2 * math.pi /180))
+        self.diff = blocks.probe_signal_f()
+        self.blocks_sub_xx_0 = blocks.sub_ff(1)
+        self.blocks_phase_shift_0_0 = blocks.phase_shift(p_y1, False)
+        self.blocks_phase_shift_0 = blocks.phase_shift(p_y1, False)
+        self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
+        self.blocks_multiply_const_vxx_0_0 = blocks.multiply_const_ff(a_y1)
+        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_ff(a_y2)
+        self.blocks_freqshift_cc_0_0_0 = blocks.rotator_cc(2.0*math.pi*(f_y2 - 1)/samp_rate)
+        self.blocks_freqshift_cc_0_0 = blocks.rotator_cc(2.0*math.pi*(f_y2 - 1)/samp_rate)
+        self.blocks_freqshift_cc_0 = blocks.rotator_cc(2.0*math.pi*(f_y1 - 1)/samp_rate)
+        self.blocks_complex_to_float_1_1 = blocks.complex_to_float(1)
+        self.blocks_complex_to_float_1_0 = blocks.complex_to_float(1)
+        self.blocks_complex_to_float_1 = blocks.complex_to_float(1)
+        self.blocks_complex_to_arg_2 = blocks.complex_to_arg(1)
+        self.blocks_complex_to_arg_0 = blocks.complex_to_arg(1)
+        self.blocks_add_const_vxx_1_0 = blocks.add_const_ff(dc_y2)
+        self.blocks_add_const_vxx_1 = blocks.add_const_ff(dc_y1)
+        self.blocks_add_const_vxx_0 = blocks.add_const_ff(p_y2)
+        self.analog_sig_source_x_0_0 = analog.sig_source_c(samp_rate, analog.GR_SIN_WAVE, 1, 1, 0, 0)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
-        self.connect((self.analog_sig_source_x_0, 0), (self.qtgui_time_sink_x_0, 1))
+        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_freqshift_cc_0, 0))
+        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_freqshift_cc_0_0, 0))
+        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_freqshift_cc_0_0_0, 0))
         self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_0, 0))
-        self.connect((self.analog_sig_source_x_0_0, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.qtgui_time_sink_x_0, 2))
+        self.connect((self.blocks_add_const_vxx_0, 0), (self.diff, 0))
+        self.connect((self.blocks_add_const_vxx_1, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.blocks_add_const_vxx_1_0, 0), (self.qtgui_time_sink_x_0, 1))
+        self.connect((self.blocks_complex_to_arg_0, 0), (self.blocks_sub_xx_0, 1))
+        self.connect((self.blocks_complex_to_arg_2, 0), (self.blocks_sub_xx_0, 0))
+        self.connect((self.blocks_complex_to_float_1, 0), (self.blocks_multiply_const_vxx_0_0, 0))
+        self.connect((self.blocks_complex_to_float_1_0, 0), (self.blocks_multiply_const_vxx_0, 0))
+        self.connect((self.blocks_complex_to_float_1_1, 0), (self.qtgui_time_sink_x_0, 2))
+        self.connect((self.blocks_freqshift_cc_0, 0), (self.blocks_complex_to_arg_2, 0))
+        self.connect((self.blocks_freqshift_cc_0, 0), (self.blocks_phase_shift_0, 0))
+        self.connect((self.blocks_freqshift_cc_0_0, 0), (self.blocks_complex_to_arg_0, 0))
+        self.connect((self.blocks_freqshift_cc_0_0, 0), (self.blocks_phase_shift_0_0, 0))
+        self.connect((self.blocks_freqshift_cc_0_0_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_add_const_vxx_1_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0_0, 0), (self.blocks_add_const_vxx_1, 0))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_float_1_1, 0))
+        self.connect((self.blocks_phase_shift_0, 0), (self.blocks_complex_to_float_1, 0))
+        self.connect((self.blocks_phase_shift_0_0, 0), (self.blocks_complex_to_float_1_0, 0))
+        self.connect((self.blocks_sub_xx_0, 0), (self.blocks_add_const_vxx_0, 0))
 
 
     def closeEvent(self, event):
@@ -245,51 +311,69 @@ class untitled(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
+        self.blocks_freqshift_cc_0.set_phase_inc(2.0*math.pi*(self.f_y1 - 1)/self.samp_rate)
+        self.blocks_freqshift_cc_0_0.set_phase_inc(2.0*math.pi*(self.f_y2 - 1)/self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+        self.blocks_freqshift_cc_0_0_0.set_phase_inc(2.0*math.pi*(self.f_y2 - 1)/self.samp_rate)
 
     def get_p_y2(self):
         return self.p_y2
 
     def set_p_y2(self, p_y2):
         self.p_y2 = p_y2
-        self.analog_sig_source_x_0.set_phase((self.p_y2 * math.pi /180))
+        self.blocks_add_const_vxx_0.set_k(self.p_y2)
 
     def get_p_y1(self):
         return self.p_y1
 
     def set_p_y1(self, p_y1):
         self.p_y1 = p_y1
-        self.analog_sig_source_x_0_0.set_phase((self.p_y1 * math.pi /180))
+        self.blocks_phase_shift_0.set_shift(self.p_y1)
+        self.blocks_phase_shift_0_0.set_shift(self.p_y1)
 
     def get_f_y2(self):
         return self.f_y2
 
     def set_f_y2(self, f_y2):
         self.f_y2 = f_y2
-        self.analog_sig_source_x_0.set_frequency(self.f_y2)
+        self.blocks_freqshift_cc_0_0.set_phase_inc(2.0*math.pi*(self.f_y2 - 1)/self.samp_rate)
+        self.blocks_freqshift_cc_0_0_0.set_phase_inc(2.0*math.pi*(self.f_y2 - 1)/self.samp_rate)
 
     def get_f_y1(self):
         return self.f_y1
 
     def set_f_y1(self, f_y1):
         self.f_y1 = f_y1
-        self.analog_sig_source_x_0_0.set_frequency(self.f_y1)
+        self.blocks_freqshift_cc_0.set_phase_inc(2.0*math.pi*(self.f_y1 - 1)/self.samp_rate)
+
+    def get_dc_y2(self):
+        return self.dc_y2
+
+    def set_dc_y2(self, dc_y2):
+        self.dc_y2 = dc_y2
+        self.blocks_add_const_vxx_1_0.set_k(self.dc_y2)
+
+    def get_dc_y1(self):
+        return self.dc_y1
+
+    def set_dc_y1(self, dc_y1):
+        self.dc_y1 = dc_y1
+        self.blocks_add_const_vxx_1.set_k(self.dc_y1)
 
     def get_a_y2(self):
         return self.a_y2
 
     def set_a_y2(self, a_y2):
         self.a_y2 = a_y2
-        self.analog_sig_source_x_0.set_amplitude(self.a_y2)
+        self.blocks_multiply_const_vxx_0.set_k(self.a_y2)
 
     def get_a_y1(self):
         return self.a_y1
 
     def set_a_y1(self, a_y1):
         self.a_y1 = a_y1
-        self.analog_sig_source_x_0_0.set_amplitude(self.a_y1)
+        self.blocks_multiply_const_vxx_0_0.set_k(self.a_y1)
 
 
 
