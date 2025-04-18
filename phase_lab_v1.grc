@@ -193,15 +193,15 @@ blocks:
     comment: ''
     gui_hint: 4,6,1,1
     label: Phase (Y2)
-    maximum: '72'
+    maximum: '360'
     minimum: '0'
     minsize: '100'
     outputmsgname: value
     relBackgroundColor: purple
-    scaleFactor: '5'
+    scaleFactor: '1'
     showvalue: 'True'
     type: real
-    value: '90'
+    value: '0'
   states:
     bus_sink: false
     bus_source: false
