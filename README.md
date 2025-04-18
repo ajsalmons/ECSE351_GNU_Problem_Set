@@ -1,6 +1,6 @@
-# ECSE351_GNU_Problem_Set
-Alden Salmons
-April 18th, 2025
+# ECSE 351 GNU Problem Set
+<br>Alden Salmons
+<br>April 18th, 2025
 
 # Problem: Baba Yaga's Hut Simulation
 - User can vary amplitude, frequency, and phase
