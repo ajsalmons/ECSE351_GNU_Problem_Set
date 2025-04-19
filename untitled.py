@@ -63,7 +63,7 @@ class untitled(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 1000
+        self.samp_rate = samp_rate = 256
         self.p_y2 = p_y2 = 90
         self.p_y1 = p_y1 = 0
         self.f_y2 = f_y2 = 0.5
