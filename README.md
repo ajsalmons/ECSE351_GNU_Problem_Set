@@ -6,11 +6,6 @@
 - User can vary amplitude, frequency, phase, and offset of two signals
 - See time domain and phasor views
 
-Create a block diagram with a GUI that simulates the Phase Lab. In the GUI, the user should be able
-to vary the amplitude, frequency and phase of a signal, and see the time domain and phasor view in real
-time. (Consider the QT GUI Vector Sink block.) An excellent version will be used in future curriculum,
-with acknowledgment of your work.
-
 # Approach
 - UI designed for 19 x 10 aspect ratio (1080p minus taskbar and menu bar)
     - Maximize area of Time Series and XY Plot in UI
@@ -22,16 +17,19 @@ with acknowledgment of your work.
         - Amplitude: 0 to 1, step of 0.01, default 1
         - Frequency: 0 to 5 Hz, step of 0.1 Hz, default 0.5 Hz
         - (Initial) Phase: 0 to 360 degress, step of 5 degress, default 90 degrees between Y1 and Y2
+        - Offset: -1 to 1, step of 0.02, default 0
 - Signal Generation
-    - Generate sine waves from two Signal Source blocks
-    - Parameters controlled by Dials
+    - Generate a complex sinusoid from a Signal Source block
+    - Apply Frequency and Phase Shift blocks in two parallel streams/signals
+    - Convert Complex to Float
+    - Apply Multiply Const (Amplitude) and Add Const (DC offset) blocks
+    - Multiply the two signals to get Y1 x Y2
 - Time Series
     - QT GUI Time Sink block
     - 4s Window
 - XY Plot
     - Converted Signal 1 and Signal 2 from float to one complex stream
     - Used Constellation Sink block, displays 10s of data (Maximum period of either signal)
-- Multiplication: Multiply signals in float stream, add as separate input to Time Sink
 
 # Difficulties
 - Phase difference drifts slightly over simulation time
@@ -52,7 +50,7 @@ with acknowledgment of your work.
     - Noticed phase issues, tried to resolve with attempt 2
 - phase_lab_v2.grc
     - Changed to two complex signal sources, applied frequency and phase shift blocks
-    - 
+    - Added back in the constellation sink for the XY Plot
 
 # References
 1. GNU Radio Wiki https://wiki.gnuradio.org/index.php/Main_Page
