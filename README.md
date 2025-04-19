@@ -48,9 +48,10 @@
 - phase_lab_v1.grc
     - Initial attempt, generated two signals in separate signal blocks
     - Noticed phase issues, tried to resolve with attempt 2
-- phase_lab_v2.grc
+- phase_lab_v2.grc - *Final version*
     - Changed to two complex signal sources, applied frequency and phase shift blocks
-    - Added back in the constellation sink for the XY Plot
+    - Added back in the Constellation Sink for the XY Plot
+    - Didn't fix the phase issues as I had hoped, but sticking with this version
 
 # References
 1. GNU Radio Wiki https://wiki.gnuradio.org/index.php/Main_Page
